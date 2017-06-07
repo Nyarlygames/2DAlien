@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Text;
 using System.IO;
-using System;
 
 public class NewGame : MonoBehaviour {
 
@@ -11,7 +10,10 @@ public class NewGame : MonoBehaviour {
     public GameObject cam;
     public GameObject canvas;
     public List<GameObject> WallsPrefabs;
+    public List<GameObject> GroundsPrefabs;
     public List<GameObject> PlayersPrefabs;
+    public List<GameObject> Board;
+    public string mapname;
     Texture2D tilesetground;
     
     void Start () {
@@ -51,6 +53,9 @@ public class NewGame : MonoBehaviour {
             WallsPrefabs.Add(Resources.Load("Wall6") as GameObject);
             WallsPrefabs.Add(Resources.Load("Wall7") as GameObject);
             WallsPrefabs.Add(Resources.Load("Wall8") as GameObject);
+            GroundsPrefabs.Add(Resources.Load("Ground1") as GameObject);
+            GroundsPrefabs.Add(Resources.Load("Ground2") as GameObject);
+            GroundsPrefabs.Add(Resources.Load("Ground3") as GameObject);
             PlayersPrefabs.Add(Resources.Load("Player1") as GameObject);
             PlayersPrefabs.Add(Resources.Load("Player2") as GameObject);
 
@@ -88,6 +93,16 @@ public class NewGame : MonoBehaviour {
                                 case "tilesetwalls":
                                     break;
                                 case "Board":
+                                    mapname = entries[1];
+                                    int cols = int.Parse(entries[2]);
+                                    int rows = int.Parse(entries[2]);
+                                    for (int y = 0; y < rows; y++)
+                                    {
+                                        for (int x = 0; x < cols; x++) {
+                                            int randomint = Random.Range(0, 3);
+                                            Board.Add(Instantiate(GroundsPrefabs[randomint], new Vector3(x * GroundsPrefabs[randomint].GetComponent<SpriteRenderer>().sprite.rect.width/100, y * GroundsPrefabs[randomint].GetComponent<SpriteRenderer>().sprite.rect.height / 100), Quaternion.identity));
+                                        }
+                                    }
                                     /*canvas = new GameObject();
                                     //canvas.tag = "Board";
                                     canvas.name = "Board";
@@ -118,7 +133,7 @@ public class NewGame : MonoBehaviour {
                 return true;
             }
         }
-        catch (Exception e)
+        catch (System.Exception e)
         {
             Debug.Log("Map not found : " + e);
             return false;

@@ -26,7 +26,7 @@ public class PlayerController : MonoBehaviour {
             mousePos = Input.mousePosition;
             goal = new Vector3(mousePos.x, mousePos.y, 0);
             wantedPos = Camera.main.ScreenToWorldPoint(goal);
-            wantedPos.z = 0;
+            wantedPos.z = transform.position.z;
         }
         else if (transform.position != wantedPos)
         {
