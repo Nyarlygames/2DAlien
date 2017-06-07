@@ -1,0 +1,9 @@
+Board, 50, 50, bg1.png
+Tilesetground, tileground
+Tilesetwalls, tilesetwalls.png
+Player, 1, 1, 1
+Player, 1, -4, -3
+Wall, 0, 0, 0
+Wall, 1, 1, 3
+Wall, 2, 0, 4
+Spawner, 45, 45
