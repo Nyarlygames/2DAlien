@@ -1,5 +1,5 @@
-Board, Map1, 50, 20
-Player, 1, 1, 1
+Board, Map1, 25, 20
+Player, 0, 1, 1
 Player, 1, -4, -3
 Wall, 0, 0, 0
 Wall, 1, 1, 3

@@ -4,7 +4,7 @@ using UnityEngine;
 using System.Text;
 using System.IO;
 
-public class NewGame : MonoBehaviour {
+public class GameManager : MonoBehaviour {
 
     public List<GameObject> Players;
     public GameObject cam;
@@ -14,6 +14,8 @@ public class NewGame : MonoBehaviour {
     public List<GameObject> GroundsPrefabs;
     public List<GameObject> PlayersPrefabs;
     public GameObject[][] Board;
+    public float maxx, maxy = 0.0f;
+    public float tilesetw, tileseth = 0.0f;
     public string mapname;
     Texture2D tilesetground;
     
@@ -59,6 +61,8 @@ public class NewGame : MonoBehaviour {
             GroundsPrefabs.Add(Resources.Load("Ground3") as GameObject);
             PlayersPrefabs.Add(Resources.Load("Player1") as GameObject);
             PlayersPrefabs.Add(Resources.Load("Player2") as GameObject);
+            tilesetw = GroundsPrefabs[0].GetComponent<SpriteRenderer>().sprite.rect.width / 100;
+            tileseth = GroundsPrefabs[0].GetComponent<SpriteRenderer>().sprite.rect.width / 100;
 
             using (theReader)
             {
@@ -90,12 +94,6 @@ public class NewGame : MonoBehaviour {
                                         Players[Players.Count - 1].name = "Player" + (Players.Count - 1);
                                     }
                                     break;
-                                case "tilesetground":
-                                   // tilesetground = (Texture2D)Resources.Load(entries[1]);
-                                   // Wall wall = new Wall(tilesetground);
-                                    break;
-                                case "tilesetwalls":
-                                    break;
                                 case "Board":
                                     mapname = entries[1];
                                     int cols = int.Parse(entries[2]);
@@ -107,18 +105,17 @@ public class NewGame : MonoBehaviour {
                                         newtile[y] = new GameObject[cols];
                                         for (int x = 0; x < cols; x++) {
                                             int randomint = Random.Range(0, 3);
-                                            newtile[y][x] = Instantiate(GroundsPrefabs[randomint], new Vector3(x * GroundsPrefabs[randomint].GetComponent<SpriteRenderer>().sprite.rect.width/100, y * GroundsPrefabs[randomint].GetComponent<SpriteRenderer>().sprite.rect.height / 100, GroundsPrefabs[randomint].transform.position.z), Quaternion.identity);
+                                            if ((y==0) || (y == rows - 1))
+                                               Instantiate(WallsPrefabs[1], new Vector3(x * tilesetw, y * tileseth, WallsPrefabs[1].transform.position.z), Quaternion.identity);
+                                            else if ((y!= 0) && (y != rows-1) && ((x == 0) || (x == cols-1)))
+                                                Instantiate(WallsPrefabs[1], new Vector3(x * tilesetw, y* tileseth, WallsPrefabs[1].transform.position.z), Quaternion.identity);
+                                            newtile[y][x] = Instantiate(GroundsPrefabs[randomint], new Vector3(x * tilesetw, y * tileseth, GroundsPrefabs[randomint].transform.position.z), Quaternion.identity);
                                         }
                                     }
                                     Board = newtile;
-                                    /*canvas = new GameObject();
-                                    //canvas.tag = "Board";
-                                    canvas.name = "Board";
-                                    Canvas Canvascomp;
-                                    Canvascomp = canvas.AddComponent<Canvas>() as Canvas;
-                                    Canvascomp.renderMode = RenderMode.ScreenSpaceCamera;
-                                    Canvascomp.worldCamera = cam.GetComponent<Camera>();*/
-
+                                    maxx = Board[0].Length * (Board[0][0].transform.localScale.x / 2);
+                                    maxy = Board.Length * (Board[0][0].transform.localScale.y / 2);
+                                    Debug.Log("maxs : " + maxx +  maxy);
 
                                     break;
                                 case "Wall":
