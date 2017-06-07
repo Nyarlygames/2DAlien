@@ -31,11 +31,12 @@ public class PlayerController : MonoBehaviour {
         else if (transform.position != wantedPos)
         {
             transform.position = Vector3.MoveTowards(transform.position, wantedPos, moveSpeed * Time.deltaTime);
-            Debug.Log("test" + wantedPos);
+           // Debug.Log("test" + wantedPos);
         }
         else
         {
-            Debug.Log("done" + transform.position);
+            //arrived on target
+          //  Debug.Log("done" + transform.position);
         }
     }
 }

@@ -8,11 +8,12 @@ public class NewGame : MonoBehaviour {
 
     public List<GameObject> Players;
     public GameObject cam;
+    public GameObject maincam;
     public GameObject canvas;
     public List<GameObject> WallsPrefabs;
     public List<GameObject> GroundsPrefabs;
     public List<GameObject> PlayersPrefabs;
-    public List<GameObject> Board;
+    public GameObject[][] Board;
     public string mapname;
     Texture2D tilesetground;
     
@@ -33,7 +34,7 @@ public class NewGame : MonoBehaviour {
         cam = Resources.Load("Main Camera") as GameObject;
         cam.tag = "MainCamera";
         cam.name = "MainCamera";
-        Instantiate(cam, new Vector3(1.0f, 1.0f, -20.0f), Quaternion.identity);
+        maincam = Instantiate(cam, new Vector3(1.0f, 1.0f, -20.0f), Quaternion.identity);
         
         Load("test.txt");
         //  Debug.Log(PlayerPrefs.GetInt("level"));
@@ -77,11 +78,14 @@ public class NewGame : MonoBehaviour {
                                 case "Player":
                                     if (Players.Count == 0)
                                     {
-                                        Players.Add(Instantiate(PlayersPrefabs[int.Parse(entries[1])], new Vector3(int.Parse(entries[2]), int.Parse(entries[3]), 0), Quaternion.identity));
+                                        Players.Add(Instantiate(PlayersPrefabs[int.Parse(entries[1])], new Vector3(int.Parse(entries[2]), int.Parse(entries[3]), PlayersPrefabs[int.Parse(entries[1])].transform.position.z), Quaternion.identity));
                                         Players[0].name = "Player";
+                                        maincam.GetComponent<CameraController>().player = Players[0];
+                                        maincam.GetComponent<CameraController>().maincam = maincam;
+                                        maincam.GetComponent<CameraController>().Board = Board;
                                     }
                                     else { 
-                                        Players.Add(Instantiate(PlayersPrefabs[int.Parse(entries[1])], new Vector3(int.Parse(entries[2]), int.Parse(entries[3]), 0), Quaternion.identity));
+                                        Players.Add(Instantiate(PlayersPrefabs[int.Parse(entries[1])], new Vector3(int.Parse(entries[2]), int.Parse(entries[3]), PlayersPrefabs[int.Parse(entries[1])].transform.position.z), Quaternion.identity));
                                         Destroy(Players[Players.Count - 1].GetComponent<PlayerController>());
                                         Players[Players.Count - 1].name = "Player" + (Players.Count - 1);
                                     }
@@ -95,14 +99,18 @@ public class NewGame : MonoBehaviour {
                                 case "Board":
                                     mapname = entries[1];
                                     int cols = int.Parse(entries[2]);
-                                    int rows = int.Parse(entries[2]);
+                                    int rows = int.Parse(entries[3]);
+                                    GameObject[][] newtile;
+                                    newtile = new GameObject[rows][];
                                     for (int y = 0; y < rows; y++)
                                     {
+                                        newtile[y] = new GameObject[cols];
                                         for (int x = 0; x < cols; x++) {
                                             int randomint = Random.Range(0, 3);
-                                            Board.Add(Instantiate(GroundsPrefabs[randomint], new Vector3(x * GroundsPrefabs[randomint].GetComponent<SpriteRenderer>().sprite.rect.width/100, y * GroundsPrefabs[randomint].GetComponent<SpriteRenderer>().sprite.rect.height / 100), Quaternion.identity));
+                                            newtile[y][x] = Instantiate(GroundsPrefabs[randomint], new Vector3(x * GroundsPrefabs[randomint].GetComponent<SpriteRenderer>().sprite.rect.width/100, y * GroundsPrefabs[randomint].GetComponent<SpriteRenderer>().sprite.rect.height / 100, GroundsPrefabs[randomint].transform.position.z), Quaternion.identity);
                                         }
                                     }
+                                    Board = newtile;
                                     /*canvas = new GameObject();
                                     //canvas.tag = "Board";
                                     canvas.name = "Board";
@@ -114,7 +122,7 @@ public class NewGame : MonoBehaviour {
 
                                     break;
                                 case "Wall":
-                                    Instantiate(WallsPrefabs[int.Parse(entries[1])], new Vector3(int.Parse(entries[2]), int.Parse(entries[3]), 0), Quaternion.identity);
+                                    Instantiate(WallsPrefabs[int.Parse(entries[1])], new Vector3(int.Parse(entries[2]), int.Parse(entries[3]), WallsPrefabs[int.Parse(entries[1])].transform.position.z), Quaternion.identity);
                                     break;
                                 default:
                                     break;
